@@ -3,19 +3,20 @@ import pandas as pd
 from RLCache import RLCache
 from LRUCache import LRUCache
 from FIFOCache import FIFOCache
+from LFUCache import LFUCache
 import random
 
 
 if __name__ == '__main__':
-    # sequence = [1, 4, 8, 5, 2, 7, 9, 7, 9, 1, 4, 10, 5, 6, 9, 7]
+    sequence = [1, 4, 8, 5, 2, 7, 9, 7, 9, 1, 4, 10, 5, 6, 9, 7]
     # sequence = [7,5,1,2,5,3,5,4,2,3,5]
     # print("Sequence: {}".format(sequence))
 
-    no_cache_blocks = 6
-    no_pages = 20 # 10
+    no_cache_blocks = 5
+    no_pages = 10
     base_reward = 10
 
-    sequence = [random.randint(1, no_pages) for i in range(7500)]
+    # sequence = [random.randint(1, no_pages) for i in range(7500)]
     print("Length of Sequence: ", len(sequence))
 
     rlCache = RLCache(no_cache_blocks, no_pages, base_reward)
@@ -96,3 +97,10 @@ if __name__ == '__main__':
             # print("MISS")
 
     print("FIFO Agent Hit Rate: {}".format(hits / total_no_requests))
+
+    ## ------------------- Get Hit Rate for Same Sequence using LFU Cache Strategy ------------
+
+    lfu_cache = LFUCache(sequence, no_pages, no_cache_blocks)
+    hits = lfu_cache.get_hits()
+
+    print("LFU Agent Hit Rate: {}".format(hits / total_no_requests))

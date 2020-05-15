@@ -14,7 +14,7 @@ class RLCache(object):
         cols = np.append(cols, np.arange(1, no_pages+1))
         # print(cols[:10])
         cols = cols.flatten()
-        print(cols)
+        # print(cols)
         self.qtable = pd.DataFrame(index=np.arange(int(rows)), columns=cols)
         self.qtable.iloc[:, 1:no_pages+1] = 0
         self.cost_list = []
