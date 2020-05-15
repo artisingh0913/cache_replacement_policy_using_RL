@@ -56,7 +56,7 @@ class RLCache(object):
 
         self.cost_list.append(reward)
 
-        print(self.qtable[self.qtable['State'] == state_str])
+        # print(self.qtable[self.qtable['State'] == state_str])
 
     def remove_page(self, state):
         # print("remove page")
