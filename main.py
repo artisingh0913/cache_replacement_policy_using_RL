@@ -1,15 +1,22 @@
 import numpy as np
 import pandas as pd
 from RLCache import RLCache
+from LRUCache import LRUCache
+import random
 
 
 if __name__ == '__main__':
-    sequence = [1, 4, 8, 5, 2, 7, 9, 7, 9, 1, 4, 10, 5, 6, 9, 7]
+    # sequence = [1, 4, 8, 5, 2, 7, 9, 7, 9, 1, 4, 10, 5, 6, 9, 7]
     # sequence = [7,5,1,2,5,3,5,4,2,3,5]
     # print("Sequence: {}".format(sequence))
-    no_cache_blocks = 4
-    no_pages = 10
+
+    no_cache_blocks = 5
+    no_pages = 20 # 10
     base_reward = 10
+
+    sequence = [random.randint(1, no_pages) for i in range(100)]
+    print("Length of Sequence: ", len(sequence))
+
     rlCache = RLCache(no_cache_blocks, no_pages, base_reward)
     print("Initial Cache State: \n {}".format(rlCache.get_cache()))
     print("---------------------------------------------------------------")
@@ -52,4 +59,23 @@ if __name__ == '__main__':
         #     rlCache.update_qtable(state, reward, action)
         print("---------------------------------------------------------------")
 
-    print("Hit Rate: {}".format(hits/total_no_requests))
+    # rlCache.plot_reward()
+
+    print("RL Agent Hit Rate: {}".format(hits/total_no_requests))
+
+
+    ## ------------------- Get Hit Rate for Same Sequence using LRU Cache Strategy ------------
+
+    lru_cache = LRUCache(no_cache_blocks)
+    hits = 0
+
+    for t, page in enumerate(sequence):
+        # print("Page Word Address: {}".format(page))
+        val = lru_cache.get(page)
+        if val == "HIT":
+            # print("HIT")
+            hits += 1
+        # else:
+            # print("MISS")
+
+    print("LRU Agent Hit Rate: {}".format(hits / total_no_requests))

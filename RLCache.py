@@ -12,9 +12,12 @@ class RLCache(object):
         rows = np.math.factorial(no_pages) / (np.math.factorial(no_cache_blocks) * np.math.factorial((no_pages - no_cache_blocks)))
         cols = np.asarray(['State'])
         cols = np.append(cols, np.arange(1, no_pages+1))
+        # print(cols[:10])
         cols = cols.flatten()
+        print(cols)
         self.qtable = pd.DataFrame(index=np.arange(int(rows)), columns=cols)
         self.qtable.iloc[:, 1:no_pages+1] = 0
+        self.cost_list = []
 
     def get_cache(self):
         return self.cache
@@ -42,11 +45,16 @@ class RLCache(object):
             # print("index: {}".format(index))
             self.qtable.iloc[index]['State'] = state_str
 
+        ### TODO: should the q-update be not only for the state received.
         if status == 'HIT':
-            self.qtable.iloc[:, action] += reward
+            # self.qtable.iloc[:, action] += reward
+            self.qtable.iloc[index][action] += reward
         else:
             for s in state:
-                self.qtable.iloc[:, s] += reward
+                # self.qtable.iloc[:, s] += reward
+                self.qtable.iloc[index][s] += reward
+
+        self.cost_list.append(reward)
 
         print(self.qtable[self.qtable['State'] == state_str])
 
@@ -60,3 +68,10 @@ class RLCache(object):
         remove_page = actions.values.argmin()
         # print("arg min: {}".format(remove_page))
         return state[remove_page]
+
+    def plot_reward(self):
+        import matplotlib.pyplot as plt
+        plt.plot(np.arange(len(self.cost_list)), self.cost_list)
+        plt.ylabel('Reward')
+        plt.xlabel('Training Steps')
+        plt.show()
