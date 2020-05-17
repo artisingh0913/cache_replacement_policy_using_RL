@@ -7,6 +7,11 @@ class LFUCache:
         self.sequence = sequence
         self.no_cache_blocks = no_cache_blocks
         self.no_pages = no_pages
+        self.frame = np.zeros(self.no_cache_blocks, dtype='int32')
+        self.freq = np.zeros(self.no_cache_blocks, dtype='int32')
+        self.count = np.zeros(self.no_pages + 1, dtype='int32')
+        self.cntr = 0
+        self.hits = 0
 
     def get_hits(self):
         p = len(self.sequence)
@@ -53,3 +58,39 @@ class LFUCache:
 
         # print("hits: {}".format(pageHit))
         return pageHit
+
+    def get(self, page):
+
+        flag = True
+
+        for j in range(self.no_cache_blocks):
+            # HIT
+            if self.frame[j] == page:
+                flag = False
+                self.hits += 1
+                self.count[page] += 1
+                return "HIT"
+        # MISS
+        if flag:
+            if self.cntr >= 3:
+                for j in range(self.no_cache_blocks):
+                    num = self.frame[j]
+                    self.freq[j] = self.count[num]
+                mini = self.freq[0]
+                for j in range(self.no_cache_blocks):
+                    if self.freq[j] < mini:
+                        mini = self.freq[j]
+
+                for j in range(self.no_cache_blocks):
+                    if self.freq[j] == mini:
+                        self.count[page] += 1
+                        self.frame[j] = page
+                        break
+            else:
+                self.frame[self.cntr] = page
+                self.count[page] += 1
+
+        if self.cntr < 3:
+            self.cntr += 1
+
+        return "MISS"

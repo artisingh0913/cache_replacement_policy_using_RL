@@ -13,10 +13,10 @@ if __name__ == '__main__':
     # print("Sequence: {}".format(sequence))
 
     no_cache_blocks = 5
-    no_pages = 10
+    no_pages = 30
     base_reward = 10
 
-    # sequence = [random.randint(1, no_pages) for i in range(7500)]
+    # sequence = [random.randint(1, no_pages) for i in range(700)]
     print("Length of Sequence: ", len(sequence))
 
     rlCache = RLCache(no_cache_blocks, no_pages, base_reward)
@@ -101,6 +101,14 @@ if __name__ == '__main__':
     ## ------------------- Get Hit Rate for Same Sequence using LFU Cache Strategy ------------
 
     lfu_cache = LFUCache(sequence, no_pages, no_cache_blocks)
-    hits = lfu_cache.get_hits()
+    hits = 0
+    for t, page in enumerate(sequence):
+        # print("Page Word Address: {}".format(page))
+        val = lfu_cache.get(page)
+        if val == "HIT":
+            # print("HIT")
+            hits += 1
+        # else:
+            # print("MISS")
 
     print("LFU Agent Hit Rate: {}".format(hits / total_no_requests))
